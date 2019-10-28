@@ -27,7 +27,7 @@ EtoM=[5, 10, 24];
 Mreceive=[2, 11];
 MtoF=[7, 14];
 % 仿真周期数
-Times = 50;
+Times = 120;
 % 关键节点信任值序列
 Keynode1=zeros(1,Times+1); Keynode1(1,1)=Trust0;
 Keynode2=zeros(1,Times+1); Keynode2(1,1)=Trust0;
@@ -110,16 +110,16 @@ for t=1:Times
     end
     
     Keynode1(1, t+1)=Elayer(10);
-    Keynode2(1, t+1)=Mlayer(2);
+    Keynode2(1, t+1)=Mlayer(9);
     Keynode3(1, t+1)=Mlayer(7);
     Keynode4(1, t+1)=Flayer(2);
 end
 temp=0:Times;
 subplot(4,1,1);
-plot(temp,Keynode1);
+plot(temp,Keynode1,'linewidth',1.5);
 subplot(4,1,2);
-plot(temp,Keynode2);
+plot(temp,Keynode2,'linewidth',1.5);
 subplot(4,1,3);
-plot(temp,Keynode3);
+plot(temp,Keynode3,'linewidth',1.5);
 subplot(4,1,4);
-plot(temp,Keynode4);
+plot(temp,Keynode4,'linewidth',1.5);
