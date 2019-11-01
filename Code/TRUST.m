@@ -6,21 +6,30 @@
 @:param Tbefore:    节点历史信任值
 @:return trust:     节点当前的信任值
 %}
-function [trust] = TRUST(alpha, beta, Ts, Ta, t, Thn, Tbefore)
-% 奖励信任值
-RW=0.2*Ts/Ta;
-% 直接信任值
-U=Ts/Ta;
-DT=DTRUST(U,0.6,0.4);
-if t<Thn
-%     RT=RTRUST(T, State, Pos);
-    trust=(alpha/(alpha+beta)*DT+beta/(alpha+beta)*Tbefore)+RW;
-elseif t>=Thn
-    trust=DT+RW;
-end
+function [trust] = TRUST(alpha, beta, Ts, Ta, t, Thn, Tbefore, node)
+n=size(Ts, 2);
+trust=zeros(1, n);
 
-if trust>1
-    trust=1;
+for i=1:n
+    if i~=node
+        if Ta(i)==0
+            RW=0;
+            U=0;
+        else
+            RW=0.2*Ts(i)/Ta(i);
+            U=Ts(i)/Ta(i);
+        end
+        DT=DTRUST(U,0.6,0.4);
+        if t(i)<Thn
+            trust(i)=(alpha/(alpha+beta)*DT+beta/(alpha+beta)*Tbefore)+RW;
+        elseif t(i)>=Thn
+            trust(i)=DT+RW;
+        end
+        
+        if trust(i)>1
+            trust(i)=1;
+        end
+    end
 end
 
 end

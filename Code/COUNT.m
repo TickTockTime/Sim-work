@@ -5,31 +5,21 @@
 @:return ES:        节点成功交互次数
 @:return EA:        节点交互总数
 %}
-function [S, A]=COUNT(ERequest, ESlevel)
-%% 0-test data
-% ERequest=randi([0,3],5, 5);
-% for j=1:5
-%     ERequest(j,j)=0;
-% end
-% ESlevel=randi([0,3],1,5);
+function [A, S, SC]=COUNT(Req, Slevel, node, A, S, SC)
 
-%% 1-function part
-num=size(ESlevel,2);
-Success=zeros(num, num);
+num=size(Req,2);
 for i=1:num
-    for j=1:num
-        if i~=j && ERequest(i,j)<=ESlevel(1,i) && ERequest(i,j)~=0
-            Success(i,j)=1;
+    if i~=node && Req(1, i)~=0
+        A(1,i)=A(1,i)+1;
+        if  Req(1,i)<=Slevel
+            S(1, i)=S(1,i)+1;
+            SC(1,i)=SC(1,i)+1;
+        else
+%             S(1, i)=0;
+            SC(1,i)=0;
         end
     end
 end
 
-A=zeros(1, num);
-S=zeros(1, num);
-
-for i=1:num
-    A(i)=A(i)+sum(ERequest(i,:)>0)+sum(ERequest(:,i)>0);
-    S(i)=S(i)+sum(Success(i,:)==1)+sum(Success(:,i)==1);
-end
 
 end
