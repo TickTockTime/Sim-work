@@ -45,6 +45,7 @@ for i=1:N1
     Elayer(i).Nsc=zeros(1, Elayer(i).NerNode);
     Elayer(i).T=Elayer(i).trust*ones(1, Elayer(i).NerNode);
     Elayer(i).Slevel=CONTROL(Elayer(i).trust);
+    Elayer(i).Err=0;
 end
 
 for i=1:N2
@@ -65,6 +66,7 @@ for i=1:N2
     Mlayer(i).Nsc=zeros(1, Mlayer(i).NerNode);
     Mlayer(i).T=Mlayer(i).trust*ones(1, Mlayer(i).NerNode);
     Mlayer(i).Slevel=CONTROL(Mlayer(i).trust);
+    Mlayer(i).Err=0;
 end
 
 for i=1:N3
@@ -79,11 +81,12 @@ for i=1:N3
     Flayer(i).Nsc=zeros(1, Flayer(i).NerNode);
     Flayer(i).T=Flayer(i).trust*ones(1, Flayer(i).NerNode);
     Flayer(i).Slevel=CONTROL(Flayer(i).trust);
+    Flayer(i).Err=0;
 end
 
 
 % 仿真周期数
-Times = 200;
+Times = 500;
 % 关键节点信任值序列
 Keynode1=zeros(1,Times+1); Keynode1(1,1)=Trust0;
 Keynode2=zeros(1,Times+1); Keynode2(1,1)=Trust0;
@@ -206,7 +209,6 @@ for t=1:Times
     Keynode3(1, t+1)=Mlayer(4).trust;
     Keynode4(1, t+1)=Flayer(1).trust;
 end
-
 
 
 %% Plot function
