@@ -6,21 +6,16 @@
 @:return Tafter:        审计之后的节点信任值
 %}
 function [Tafter]=CHECK(Tnow, Tbefore, Eta, Err)
-[n, len]=size(Err);
-Tafter=Tnow;
-for i=1:len
-    if Err(i)~=0
-        for node=1:len
-            if node~=i
-                delt_trust=Tnow(min(node,i), max(node,i))-Tbefore(min(node,i), max(node,i));
-                if delt_trust<0
-                    Tafter(min(node,i), max(node,i))=Tnow(min(node,i), max(node,i))+Eta(Err(i))*delt_trust;
-                else
-                    Tafter(min(node,i), max(node,i))=Tnow(min(node,i), max(node,i))+1/Eta(Err(i))*delt_trust;
-                end
-            end
-        end
+    deltaT=Tnow-Tbefore;
+    if deltaT<0
+        Tafter=Tbefore+Eta(Err)*deltaT;
+    else
+        Tafter=Tbefore+1/Eta(Err)*deltaT;
     end
-end
-
+    if Tafter<0
+        Tafter=0;
+    elseif Tafter>1
+        Tafter=1;
+    end
+    
 end

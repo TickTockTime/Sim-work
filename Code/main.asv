@@ -14,8 +14,7 @@ clc;
 N1=30; N2=15; N3=10; 
 alpha0=0.7; beta0=0.3; 
 Trust0=0.5; M1=2; Thn=5; P=3; m=3; lamda=0.8;
-Eta=[20 30 40];
-trust_Thn=[0.7 0.4 0.2];
+Eta=[800 1000 1200 1400];
 %% 仿真部分（在每一个周期T中，假设相邻节点均进行一次交互）
 %% 攻击者部分
 % 攻击对象
@@ -78,7 +77,6 @@ for i=1:N2
     Mlayer(i).T=Mlayer(i).trust*ones(1, Mlayer(i).NerNode);
     Mlayer(i).Slevel=CONTROL(Mlayer(i).trust);
     Mlayer(i).Err=0;
-    Mlayer(i).EHistory=0;
     Mlayer(i).Cap=zeros(1, m);
 end
 
@@ -96,7 +94,6 @@ for i=1:N3
     Flayer(i).T=Flayer(i).trust*ones(1, Flayer(i).NerNode);
     Flayer(i).Slevel=CONTROL(Flayer(i).trust);
     Flayer(i).Err=0;
-    Flayer(i).EHistory=0;
     Flayer(i).Cap=zeros(1, m);
 end
 
@@ -108,16 +105,12 @@ Keynode1=zeros(1,Times+1); Keynode1(1,1)=Trust0;
 Keynode2=zeros(1,Times+1); Keynode2(1,1)=Trust0;
 Keynode3=zeros(1,Times+1); Keynode3(1,1)=Trust0;
 Keynode4=zeros(1,Times+1); Keynode4(1,1)=Trust0;
-ErrTime=[10 50 64 90];
+ErrTime=[10 34 50 64 90];
 for t=1:Times
     if ismember(t, ErrTime)
-        Elayer(10).Err=3;
-        Mlayer(2).Err=2;
-        Mlayer(14).Err=1;
+        Elayer(2).Err=3;
     else
-        Elayer(10).Err=0;
-        Mlayer(2).Err=0;
-        Mlayer(14).Err=0;
+        Elayer(2).Err=0;
     end
     for i=1:N1
         Elayer(i).Slevel=CONTROL(Elayer(i).trust);
@@ -153,14 +146,23 @@ for t=1:Times
         % 平均求出综合信任值
         Elayer(i).trust=(sum(Elayer(i).T)-Elayer(i).T(i))/(Elayer(i).NerNode-1);
 
-        if Elayer(i).EHistory~=0
-            Elayer(i).trust=CHECK(Elayer(i).trust, Elayer(i).trustB,Eta, Elayer(i).EHistory);
+        if Elayer(i).EHistory==1
+            deltaT=Elayer(i).trust-Elayer(i).trustB;
+            if deltaT<0
+                Elayer(i).trust=Elayer(i).trustB+30*deltaT;
+            else
+                Elayer(i).trust=Elayer(i).trustB+1/30*deltaT;
+            end
         end
         if Elayer(i).Err~=0
-            Elayer(i).trust=min(Elayer(i).trust, trust_Thn(Elayer(i).Err));
-            Elayer(i).EHistory=Elayer(i).Err;
+            if Elayer(i).trust>0.2
+                Elayer(i).trust=0.2;
+            end
+            Elayer(i).EHistory=1;
         end
-
+        if Elayer(i).trust<0
+            Elayer(i).trust=0;
+        end
         Elayer(i).trustB=Elayer(i).trust;
     end
     
@@ -202,17 +204,6 @@ for t=1:Times
         
         Mlayer(i).T=TRUST(alpha0,beta0,Mlayer(i).Nsa,Mlayer(i).Na,Mlayer(i).Nsc,Thn,(sum(Mlayer(i).T(1,1:N2))-Mlayer(i).T(i))/(N2-1),Mlayer(i).id);
         Mlayer(i).trust=(sum(Mlayer(i).T)-Mlayer(i).T(i))/(Mlayer(i).NerNode-1);
-        
-        if Mlayer(i).EHistory~=0
-            Mlayer(i).trust=CHECK(Mlayer(i).trust, Mlayer(i).trustB,Eta, Mlayer(i).EHistory);
-        end
-        if Mlayer(i).Err~=0
-            Mlayer(i).trust=min(Mlayer(i).trust, trust_Thn(Mlayer(i).Err));
-            Mlayer(i).EHistory=Mlayer(i).Err;
-        end
-
-        Mlayer(i).trustB=Mlayer(i).trust;
-        
     end
     
     for i=1:N3
@@ -251,9 +242,9 @@ for t=1:Times
         Flayer(i).trust=Flayer(i).T;
     end
     
-    Keynode1(1, t+1)=Elayer(10).trust;
-    Keynode2(1, t+1)=Mlayer(2).trust;
-    Keynode3(1, t+1)=Mlayer(14).trust;
+    Keynode1(1, t+1)=Elayer(2).trust;
+    Keynode2(1, t+1)=Elayer(3).trust;
+    Keynode3(1, t+1)=Mlayer(4).trust;
     Keynode4(1, t+1)=Flayer(1).trust;
 end
 
@@ -262,36 +253,14 @@ end
 temp=0:Times;
 subplot(4,1,1);
 plot(temp,Keynode1,'linewidth',1.5);
-hold on
-for i=1:size(ErrTime, 2)
-    drawArrow(ErrTime(i), 0.2,'r','r',1,1.5);
-    hold on
-end
+annotation('arrow',[0.5, 0],[10,0.2])
 ylim([0 1]);
-
 subplot(4,1,2);
 plot(temp,Keynode2,'linewidth',1.5);
-hold on
-for i=1:size(ErrTime, 2)
-    drawArrow(ErrTime(i), 0.2,'r','r',1,1.5);
-    hold on
-end
 ylim([0 1]);
-
 subplot(4,1,3);
 plot(temp,Keynode3,'linewidth',1.5);
-hold on
-for i=1:size(ErrTime, 2)
-    drawArrow(ErrTime(i), 0.2,'r','r',1,1.5);
-    hold on
-end
 ylim([0 1]);
-
 subplot(4,1,4);
 plot(temp,Keynode4,'linewidth',1.5);
-hold on
-for i=1:size(ErrTime, 2)
-    drawArrow(ErrTime(i), 0.2,'r','r',1,1.5);
-    hold on
-end
 ylim([0 1]);

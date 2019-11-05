@@ -28,6 +28,8 @@ for i=1:n
         
         if trust(i)>1
             trust(i)=1;
+        elseif trust(i)<0
+            trust(i)=0;
         end
     end
 end
