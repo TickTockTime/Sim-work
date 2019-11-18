@@ -107,7 +107,7 @@ Times = 200;
 Keynode1=zeros(1,Times+1); Keynode1(1,1)=Trust0;
 Keynode2=zeros(1,Times+1); Keynode2(1,1)=Trust0;
 Keynode3=zeros(1,Times+1); Keynode3(1,1)=Trust0;
-Keynode4=zeros(1,Times+1); Keynode4(1,1)=Trust0;
+% Keynode4=zeros(1,Times+1); Keynode4(1,1)=Trust0;
 ErrTime=[10 50 64 90];
 for t=1:Times
     if ismember(t, ErrTime)
@@ -254,44 +254,53 @@ for t=1:Times
     Keynode1(1, t+1)=Elayer(10).trust;
     Keynode2(1, t+1)=Mlayer(2).trust;
     Keynode3(1, t+1)=Mlayer(14).trust;
-    Keynode4(1, t+1)=Flayer(1).trust;
+%     Keynode4(1, t+1)=Flayer(1).trust;
 end
 
 
 %% Plot function
 temp=0:Times;
-subplot(4,1,1);
+subplot(3,1,1);
 plot(temp,Keynode1,'linewidth',1.5);
 hold on
+xlabel("交互次数");
+ylabel("信任值");
+title("关键节点1");
 for i=1:size(ErrTime, 2)
     drawArrow(ErrTime(i), 0.2,'r','r',1,1.5);
     hold on
 end
 ylim([0 1]);
 
-subplot(4,1,2);
+subplot(3,1,2);
 plot(temp,Keynode2,'linewidth',1.5);
 hold on
+xlabel("交互次数");
+ylabel("信任值");
+title("关键节点2");
 for i=1:size(ErrTime, 2)
     drawArrow(ErrTime(i), 0.2,'r','r',1,1.5);
     hold on
 end
 ylim([0 1]);
 
-subplot(4,1,3);
+subplot(3,1,3);
 plot(temp,Keynode3,'linewidth',1.5);
 hold on
+xlabel("交互次数");
+ylabel("信任值");
+title("关键节点3");
 for i=1:size(ErrTime, 2)
     drawArrow(ErrTime(i), 0.2,'r','r',1,1.5);
     hold on
 end
 ylim([0 1]);
 
-subplot(4,1,4);
-plot(temp,Keynode4,'linewidth',1.5);
-hold on
-for i=1:size(ErrTime, 2)
-    drawArrow(ErrTime(i), 0.2,'r','r',1,1.5);
-    hold on
-end
-ylim([0 1]);
+% subplot(4,1,4);
+% plot(temp,Keynode4,'linewidth',1.5);
+% hold on
+% for i=1:size(ErrTime, 2)
+%     drawArrow(ErrTime(i), 0.2,'r','r',1,1.5);
+%     hold on
+% end
+% ylim([0 1]);
