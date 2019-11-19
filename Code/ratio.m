@@ -103,12 +103,12 @@ end
 Times = 20;
 
 %% 外部渗透
-p_out=zeros(1, Times);
-for i=1:Times
+p_out=zeros(1, 10);
+for i=1:10
     out_attack_s=0;
-    for t=1:i
+    for t=1:Times
         state=zeros(1, 3);
-        node=randi([12 15]);
+        node=floor(i*N1/10);
 %         node=15;
         node2=randi([0 3]);
         node1=node-node2;
@@ -121,19 +121,19 @@ for i=1:Times
             out_attack_s=out_attack_s+1;
         end
     end
-    p_out(i) = (i-out_attack_s)/i;
+    p_out(i) = (Times-out_attack_s)/Times;
 end
 
 
 
 
 %% 内部渗透
-p_inside=zeros(1, Times);
-for i=1:Times
+p_inside=zeros(1, 10);
+for i=1:10
     inside_attack_s=0;
-    for t=1:i
+    for t=1:Times
         state=zeros(1, 3);
-        node=randi([5 7]);
+        node=floor(i*N2/10);
         Mattack=RAND(node, N2);
         state(1, 2)=ISERR(Mattack, Mreceive);
         state(1, 3)=ISERR(Mattack, MtoF);
@@ -141,20 +141,20 @@ for i=1:Times
             inside_attack_s=inside_attack_s+1;
         end
     end
-    p_inside(i) = (i-inside_attack_s)/i;
+    p_inside(i) = (Times-inside_attack_s)/Times;
 end
 
 
 %% plot distgraph
 subplot(2,1,1)
-x=1:Times;
+x=0.1:0.1:1;
 bar(x, p_out);
-xlabel("攻击次数");
+xlabel("恶意节点比例");
 ylabel("免疫成功率");
-title("外部攻击阻断效果");
+title("外部攻击不同恶意节点比例阻断效果");
 subplot(2,1,2)
-x=1:Times;
+x=0.1:0.1:1;
 bar(x, p_inside);
-xlabel("攻击次数");
+xlabel("恶意节点比例");
 ylabel("免疫成功率");
-title("内部攻击阻断效果");
+title("内部攻击不同恶意节点比例阻断效果");
